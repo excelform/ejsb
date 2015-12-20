@@ -1,6 +1,11 @@
+'use strict';
 var app = require("express")();
 var Sequelize = require('sequelize');
- 
+var Personne = require('./Personne');
+
+var pers = new Personne("Marc", "AUTRAN");
+pers.decrire(); 
+
 // sequelize initialization
 var sequelize = new Sequelize('test', 'postgres', 'root', {
   host: 'localhost',
@@ -22,27 +27,35 @@ sequelize.authenticate().then(function(err){
 }); 
 
 // model definition
-var User = sequelize.define("User", {
-    username: Sequelize.STRING,
-    password: Sequelize.STRING
+var personnes = sequelize.define("personnes", {
+    nom: Sequelize.STRING,
+    prenom: Sequelize.STRING
 });
  
-User.sync().then(function(err) {
+personnes.sync().then(function(err) {
     // insert new user
-    User.create({
-        username: "bob",
-        password: "password"
+    personnes.create({
+        nom: pers.nom,
+        prenom: pers.prenom
     })
 });
 
-User.destroy({where: {username: "bob"}}).then(function(arg){
+personnes.sync().then(function(err) {
+    // insert new user
+    personnes.create({
+        nom: "bob",
+        prenom: "password"
+    })
+});
+
+personnes.destroy({where: {nom: "bob"}}).then(function(arg){
 		console.log(arg);
 });
 
-User.find({where: { username: 'bob' }}).then(function(john) {
-            console.log('Hello ' + john.username + '!');
-            console.log('All attributes of john:', john.password);
-        })
+personnes.find({where: { nom: 'AUTRAN' }}).then(function(john) {
+            console.log('Hello ' + john.nom + '!');
+            console.log('All attributes of john:', john.prenom);
+        });
 
 app.get("/", function(req, res) {
     res.send({name:"Hello Wolrd"});
