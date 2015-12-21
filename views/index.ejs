@@ -5,8 +5,24 @@
     <body>
         <h1>Carnet d'adresses</h1>
 		<h2>liste des utilisateurs</h2>
-		<h2><%= nbre %></h2>
-		<h2><%= liste[1].nom %></h2>
+		<table>
+			<thead>
+				<tr>
+				  <th>nom</th>
+				  <th>prenom</th>
+				</tr>
+			</thead>
+			<tbody>
+				<%
+					for(var i = 0 ; i < nbre ; i++) {
+				%>
+					<tr>
+					  <td><%= liste[i].nom %></td>
+					  <td><%= liste[i].prenom %></td>
+					</tr>
+				<% } %>
+			</tbody>
+		</table>
 		<form id="form1" action="/ajouter" method="post">
 			<h2>Ajouter un utilisateur</h2>
 			<p><label> Nom: </label>
