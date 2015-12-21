@@ -32,8 +32,6 @@ var creerPersonne = function(prenom, nom){
 	return (new Personne(prenom, nom));
 }
 
-var pers = creerPersonne("marc", "AUTRAN");
-
 var ajouterPersonne = function(pers){
 	// inserer une personne en base
 	personnes.create({
@@ -57,12 +55,12 @@ var supprimerPersonne = function(pers){
 //        });
 
 app.get("/", function(req, res) {
-    res.render('index.ejs', {nom: pers.nom, prenom: pers.prenom});
+    res.render('index.ejs');
 })
 .post('/ajouter', function(req, res) {
     if (req.body.nom != '' && req.body.prenom != '') 
 	{
-		pers = creerPersonne(req.body.prenom, req.body.nom);
+		var pers = creerPersonne(req.body.prenom, req.body.nom);
 		ajouterPersonne(pers);
     }
     res.redirect('/');
@@ -70,7 +68,7 @@ app.get("/", function(req, res) {
 .post('/supprimer', function(req, res) {
     if (req.body.nomSup != '' && req.body.prenomSup != '') 
 	{
-		pers = creerPersonne(req.body.prenomSup, req.body.nomSup);
+		var pers = creerPersonne(req.body.prenomSup, req.body.nomSup);
 		supprimerPersonne(pers);
     }
     res.redirect('/');
