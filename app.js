@@ -24,8 +24,8 @@ var personnes = sequelize.define("personnes", {
     prenom: Sequelize.STRING
 });
 
-personnes.sync().then(function(err) {
-	console.log("ok" + err);
+personnes.sync().then(function(arg) {
+	console.log("synchro ok");
 });
 
 var creerPersonne = function(prenom, nom){
@@ -48,14 +48,15 @@ var supprimerPersonne = function(pers){
 	});
 }
 
-
-//personnes.find({where: { nom: 'AUTRAN' }}).then(function(user) {
-//            console.log('Hello ' + user.nom + '!');
-//            console.log('All attributes of user:', user.prenom);
-//        });
+personnes.find({where: { nom: 'AUTRAN' }}).then(function(user) {
+            console.log('Hello ' + user.nom + '!');
+            console.log('All attributes of user: ' + user.prenom + user.id);
+        });
 
 app.get("/", function(req, res) {
-    res.render('index.ejs');
+	personnes.findAndCountAll().then(function(result) {
+		res.render('index.ejs', {liste: result.rows, nbre: result.count}); 
+	});
 })
 .post('/ajouter', function(req, res) {
     if (req.body.nom != '' && req.body.prenom != '') 
