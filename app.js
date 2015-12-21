@@ -7,7 +7,7 @@ var Personne = require('./Personne');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// sequelize initialization
+// initialisation de sequelize
 var sequelize = new Sequelize('test', 'postgres', 'root', {
   host: 'localhost',
   dialect: 'postgres',
@@ -18,10 +18,14 @@ var sequelize = new Sequelize('test', 'postgres', 'root', {
   },
 });
 
-// model definition
+// definition du modele personnes
 var personnes = sequelize.define("personnes", {
     nom: Sequelize.STRING,
     prenom: Sequelize.STRING
+});
+
+personnes.sync().then(function(err) {
+	console.log("ok" + err);
 });
 
 var creerPersonne = function(prenom, nom){
@@ -30,19 +34,22 @@ var creerPersonne = function(prenom, nom){
 
 var pers = creerPersonne("marc", "AUTRAN");
 
-var insertPersonne = function(pers){
-	personnes.sync().then(function(err) {
-		// insert new user
-		personnes.create({
-			nom: pers.nom,
-			prenom: pers.prenom
-		})
+var ajouterPersonne = function(pers){
+	// inserer une personne en base
+	personnes.create({
+		nom: pers.nom,
+		prenom: pers.prenom
+	}).then(function(arg){
+		console.log("1 ligne ajoutée");
 	});
 } 
 
-//personnes.destroy({where: {nom: "bob"}}).then(function(arg){
-//		console.log(arg);
-//});
+var supprimerPersonne = function(pers){
+	personnes.destroy({where: {nom: pers.nom, prenom: pers.prenom}}).then(function(arg){
+		console.log(arg);
+	});
+}
+
 
 //personnes.find({where: { nom: 'AUTRAN' }}).then(function(user) {
 //            console.log('Hello ' + user.nom + '!');
@@ -56,9 +63,17 @@ app.get("/", function(req, res) {
     if (req.body.nom != '' && req.body.prenom != '') 
 	{
 		pers = creerPersonne(req.body.prenom, req.body.nom);
-		insertPersonne(pers);
+		ajouterPersonne(pers);
+    }
+    res.redirect('/');
+})
+.post('/supprimer', function(req, res) {
+    if (req.body.nomSup != '' && req.body.prenomSup != '') 
+	{
+		pers = creerPersonne(req.body.prenomSup, req.body.nomSup);
+		supprimerPersonne(pers);
     }
     res.redirect('/');
 });
 
-app.listen( 5000);
+app.listen(5000);
